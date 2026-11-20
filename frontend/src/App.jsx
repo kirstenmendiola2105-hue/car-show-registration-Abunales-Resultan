@@ -1,6 +1,8 @@
 
 import { useState } from "react";
 import { registrations as initialRegistrations } from "./data/registrations.js";
+import { carShows as initialCarShows } from "./data/carShows.js";
+import CarShowTable from "./components/CarShowTable";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import RegistrationTable from "./components/RegistrationTable";
@@ -31,6 +33,7 @@ function StatCard({ title, value, description, icon, color }) {
 
 function App() {
   const [registrations, setRegistrations] = useState(initialRegistrations);
+  const [carShows, setCarShows] = useState(initialCarShows);
 
   const totalRegistrations = registrations.length;
 
@@ -77,7 +80,7 @@ function App() {
     },
     {
       title: "Total Car Shows",
-      value: "5",
+      value: carShows.length,
       description: "Sample car show events",
       icon: "🚗",
       color: "bg-purple-100",
@@ -124,6 +127,11 @@ function App() {
             registrations={registrations}
             setRegistrations={setRegistrations}
           />
+          
+          <CarShowTable
+  carShows={carShows}
+  setCarShows={setCarShows}
+/>
         </main>
       </div>
     </div>
