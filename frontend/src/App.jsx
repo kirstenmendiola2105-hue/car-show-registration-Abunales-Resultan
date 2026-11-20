@@ -1,3 +1,6 @@
+
+import { useState } from "react";
+import { registrations as initialRegistrations } from "./data/registrations.js";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import RegistrationTable from "./components/RegistrationTable";
@@ -27,31 +30,47 @@ function StatCard({ title, value, description, icon, color }) {
 }
 
 function App() {
+  const [registrations, setRegistrations] = useState(initialRegistrations);
+
+  const totalRegistrations = registrations.length;
+
+  const approvedCount = registrations.filter(
+    (registration) => registration.status === "Approved"
+  ).length;
+
+  const pendingCount = registrations.filter(
+    (registration) => registration.status === "Pending"
+  ).length;
+
+  const rejectedCount = registrations.filter(
+    (registration) => registration.status === "Rejected"
+  ).length;
+
   const statistics = [
     {
       title: "Total Registrations",
-      value: "25",
-      description: "All sample registrations",
+      value: totalRegistrations,
+      description: "All registrations",
       icon: "📋",
       color: "bg-blue-100",
     },
     {
       title: "Approved",
-      value: "14",
+      value: approvedCount,
       description: "Successfully approved",
       icon: "✓",
       color: "bg-green-100",
     },
     {
       title: "Pending",
-      value: "8",
+      value: pendingCount,
       description: "Waiting for review",
       icon: "◷",
       color: "bg-yellow-100",
     },
     {
       title: "Rejected",
-      value: "3",
+      value: rejectedCount,
       description: "Rejected applications",
       icon: "✕",
       color: "bg-red-100",
@@ -101,7 +120,10 @@ function App() {
             </div>
           </section>
 
-          <RegistrationTable />
+          <RegistrationTable
+            registrations={registrations}
+            setRegistrations={setRegistrations}
+          />
         </main>
       </div>
     </div>
