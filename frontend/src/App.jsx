@@ -1,7 +1,8 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { registrations as initialRegistrations } from "./data/registrations.js";
 import { carShows as initialCarShows } from "./data/carShows.js";
+import { getSummary } from "./api/sample-data.js";
 import CarShowTable from "./components/CarShowTable";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
@@ -15,7 +16,9 @@ function StatCard({ title, value, description, icon, color }) {
           {title}
         </p>
 
-        <div className={`flex h-11 w-11 items-center justify-center rounded-lg text-xl ${color}`}>
+        <div
+          className={`flex h-11 w-11 items-center justify-center rounded-lg text-xl ${color}`}
+        >
           {icon}
         </div>
       </div>
@@ -35,53 +38,84 @@ function App() {
   const [registrations, setRegistrations] = useState(initialRegistrations);
   const [carShows, setCarShows] = useState(initialCarShows);
 
-  const totalRegistrations = registrations.length;
+  // Store the dashboard summary returned by the sample API.
+  const [summary, setSummary] = useState(null);
+  const [summaryError, setSummaryError] = useState("");
 
-  const approvedCount = registrations.filter(
-    (registration) => registration.status === "Approved"
-  ).length;
+  // Load dashboard summary when the application starts.
+  useEffect(() => {
+    let isActive = true;
 
-  const pendingCount = registrations.filter(
-    (registration) => registration.status === "Pending"
-  ).length;
+    async function loadSummary() {
+      try {
+        const result = await getSummary();
 
-  const rejectedCount = registrations.filter(
-    (registration) => registration.status === "Rejected"
-  ).length;
+        if (isActive) {
+          setSummary(result);
+          setSummaryError("");
+        }
+      } catch (error) {
+        if (isActive) {
+          setSummaryError("Unable to load dashboard summary.");
+          console.error("Summary loading error:", error);
+        }
+      }
+    }
 
+    loadSummary();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  // Format amounts as Philippine pesos.
+  const formatCurrency = (amount) => {
+    if (amount === undefined || amount === null) {
+      return "—";
+    }
+
+    return new Intl.NumberFormat("en-PH", {
+      style: "currency",
+      currency: "PHP",
+      minimumFractionDigits: 2,
+    }).format(amount);
+  };
+
+  // The five required KPI cards.
   const statistics = [
     {
       title: "Total Registrations",
-      value: totalRegistrations,
-      description: "All registrations",
+      value: summary ? summary.totalRegistrations : "—",
+      description: "All registered participants",
       icon: "📋",
       color: "bg-blue-100",
     },
     {
-      title: "Approved",
-      value: approvedCount,
-      description: "Successfully approved",
-      icon: "✓",
+      title: "Total Payments",
+      value: summary ? formatCurrency(summary.totalPayments) : "—",
+      description: "Payments collected",
+      icon: "💰",
       color: "bg-green-100",
     },
     {
-      title: "Pending",
-      value: pendingCount,
-      description: "Waiting for review",
-      icon: "◷",
-      color: "bg-yellow-100",
-    },
-    {
-      title: "Rejected",
-      value: rejectedCount,
-      description: "Rejected applications",
-      icon: "✕",
+      title: "Uncollected Payments",
+      value: summary ? formatCurrency(summary.uncollectedPayments) : "—",
+      description: "Remaining payments",
+      icon: "₱",
       color: "bg-red-100",
     },
     {
-      title: "Total Car Shows",
-      value: carShows.length,
-      description: "Sample car show events",
+      title: "Confirmed",
+      value: summary ? summary.confirmed : "—",
+      description: "Confirmed registrations",
+      icon: "✓",
+      color: "bg-blue-100",
+    },
+    {
+      title: "Checked In",
+      value: summary ? summary.checkedIn : "—",
+      description: "Participants checked in",
       icon: "🚗",
       color: "bg-purple-100",
     },
@@ -116,6 +150,12 @@ function App() {
               </p>
             </div>
 
+            {summaryError && (
+              <p className="mb-4 text-sm text-red-600">
+                {summaryError}
+              </p>
+            )}
+
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
               {statistics.map((stat) => (
                 <StatCard key={stat.title} {...stat} />
@@ -127,11 +167,11 @@ function App() {
             registrations={registrations}
             setRegistrations={setRegistrations}
           />
-          
+
           <CarShowTable
-  carShows={carShows}
-  setCarShows={setCarShows}
-/>
+            carShows={carShows}
+            setCarShows={setCarShows}
+          />
         </main>
       </div>
     </div>
