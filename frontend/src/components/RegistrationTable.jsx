@@ -270,17 +270,27 @@ function RegistrationTable() {
             Try Again
           </button>
         </div>
-      ) : registrations.length === 0 ? (
-        /* Empty state */
-        <div className="py-16 text-center">
-          <p className="font-semibold text-slate-700">
-            No registrations found
-          </p>
+      
+) : registrations.length === 0 ? (
+  /* Empty state */
+  <div className="py-16 text-center">
+    <p className="font-semibold text-slate-700">
+      No registrations found
+    </p>
 
-          <p className="mt-1 text-sm text-slate-500">
-            Try changing your search or filters.
-          </p>
-        </div>
+    <p className="mt-1 text-sm text-slate-500">
+      Try changing your search or filters.
+    </p>
+
+    <button
+      type="button"
+      onClick={handleClearFilters}
+      className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+    >
+      Clear Filters
+    </button>
+  </div>
+
       ) : (
         <>
           {/* Registration table */}
@@ -414,7 +424,7 @@ function RegistrationTable() {
       onClick={() =>
         setCurrentPage((page) => Math.max(1, page - 1))
       }
-      disabled={currentPage === 1}
+     disabled={isLoading || currentPage === 1}
       className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
     >
       Previous
@@ -426,6 +436,7 @@ function RegistrationTable() {
           key={page}
           type="button"
           onClick={() => setCurrentPage(page)}
+disabled={isLoading}
           className={`rounded-lg px-4 py-2 text-sm font-medium ${
             currentPage === page
               ? "bg-blue-600 text-white"
@@ -444,7 +455,7 @@ function RegistrationTable() {
           Math.min(totalPages, page + 1)
         )
       }
-      disabled={currentPage === totalPages || totalPages === 0}
+      disabled={isLoading || currentPage === totalPages || totalPages === 0}
       className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
     >
       Next
