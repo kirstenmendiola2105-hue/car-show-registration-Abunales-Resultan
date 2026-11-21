@@ -4,7 +4,7 @@
 // Sample registrations for Car Show 2027
 // This file is used while the real C# API is being developed.
 
-const registrations = [
+export const registrations = [
   {
     id: "sample-001",
     registrationNumber: "CS27-0001",
