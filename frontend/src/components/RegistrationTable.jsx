@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { getRegistrations } from "../api/sample-data.js";
+import { getRegistrations } from "../api/registrationsApi.js";
 
 function RegistrationTable() {
   const [registrations, setRegistrations] = useState([]);

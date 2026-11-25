@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { registrations as initialRegistrations } from "./data/registrations.js";
 import { carShows as initialCarShows } from "./data/carShows.js";
-import { getSummary } from "./api/sample-data.js";
+import { getSummary } from "./api/registrationsApi.js";
 import CarShowTable from "./components/CarShowTable";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
