@@ -2,9 +2,9 @@
 
 ## Project Description
 
-The Car Show Registration System is a React JS dashboard developed for AutoVista Events. It helps event staff monitor registrations, payments, participant information, and registration status for Car Show 2027.
+The Car Show Registration System is a React JS dashboard developed for AutoVista Events. It helps event staff monitor registrations, payments, participant information, and registration statuses for Car Show 2027.
 
-This frontend is built using React JS, Vite, and Tailwind CSS.
+The frontend is built using React JS, Vite, and Tailwind CSS. It is integrated with a C# backend API to retrieve registration records and dashboard summary information.
 
 ## Technologies Used
 
@@ -12,7 +12,9 @@ This frontend is built using React JS, Vite, and Tailwind CSS.
 - Vite
 - Tailwind CSS
 - JavaScript
+- Fetch API
 - Git and GitHub
+- C# Backend API
 
 ## Frontend Features
 
@@ -30,7 +32,9 @@ This frontend is built using React JS, Vite, and Tailwind CSS.
 - Pagination with Previous, Next, and page-number buttons
 - Page-size selector
 - Loading, empty, and error states
+- Try Again button for API errors
 - Philippine Peso currency formatting
+- Real-time registration and summary data retrieved from the backend API
 
 ## Project Structure
 
@@ -39,7 +43,8 @@ frontend/
 ├── public/
 ├── src/
 │   ├── api/
-│   │   └── sample-data.js
+│   │   ├── sample-data.js
+│   │   └── registrationsApi.js
 │   ├── components/
 │   │   ├── Header.jsx
 │   │   ├── RegistrationTable.jsx
@@ -72,63 +77,77 @@ npm install
 npm run dev
 ```
 
-5. Open the local URL displayed in the terminal, usually:
+5. Open the local URL displayed in the terminal.
 
-```text
-http://localhost:5173/
+The frontend requires the backend API to be running to retrieve actual registration and summary data.
+
+## Backend API Integration
+
+The frontend uses `src/api/registrationsApi.js` to communicate with the C# backend.
+
+The API base URL is configured using:
+
+```javascript
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5205";
 ```
 
-## Sample Data
-
-The frontend currently uses `src/api/sample-data.js`.
-
-This file contains at least 25 sample registrations and provides the following functions:
-
-- `getRegistrations()` – retrieves, filters, and paginates sample registration records.
-- `getSummary()` – returns the dashboard summary values.
-
-The sample data allows frontend development and testing while the backend API is being developed.
-
-## Switching to the Real Backend API
-
-When the backend is ready, the frontend will use the following endpoints:
-
-**Registrations**
+The default backend address is:
 
 ```text
+http://localhost:5205
+```
+
+An optional `.env.development` file can be created inside the frontend folder to configure a different API address:
+
+```env
+VITE_API_BASE_URL=http://localhost:5205
+```
+
+Restart the Vite development server after changing environment variables.
+
+### API Endpoints
+
+**1. Get Registrations**
+
+```http
 GET /api/registrations?participantName=&type=&status=&page=1&pageSize=10
 ```
 
-**Registration Summary**
+This endpoint retrieves registration records and supports participant-name searching, registration type filtering, status filtering, and pagination.
 
-```text
+**2. Get Registration Summary**
+
+```http
 GET /api/registrations/summary
 ```
 
-The real API implementation will be placed in:
+This endpoint retrieves the summary values displayed in the dashboard KPI cards.
 
-```text
-src/api/registrationsApi.js
-```
+### API Functions
 
-To switch from sample data to the real API:
+The `registrationsApi.js` file provides the following functions:
 
-1. Confirm the actual API base URL with the Backend Developer.
-2. Create `src/api/registrationsApi.js` with the real fetch calls.
-3. Keep the same function names and return shapes as `sample-data.js`.
-4. Update the imports in `App.jsx` and `components/RegistrationTable.jsx` to use `registrationsApi.js` instead of `sample-data.js`.
-5. Test the dashboard using the running C# backend.
-6. Verify that the KPI values, search, filters, and pagination match the API responses.
+- `getRegistrations()` – retrieves registration records from the backend API using search, filters, and pagination parameters.
+- `getSummary()` – retrieves dashboard summary information from the backend API.
 
-The actual API URL will be configured in `frontend/.env.development` after it is confirmed by the Backend Developer.
+The frontend uses these functions in:
 
-Example:
+- `App.jsx` – retrieves dashboard summary information.
+- `components/RegistrationTable.jsx` – retrieves registration records.
 
-```env
-VITE_API_BASE_URL=http://localhost:YOUR_API_PORT
-```
+The frontend handles unsuccessful API responses and displays error messages when the backend is unavailable.
 
-Replace `YOUR_API_PORT` with the actual port provided by the Backend Developer.
+## Sample Data
+
+The project also contains `src/api/sample-data.js`, which was used during the initial frontend development and testing.
+
+It provides sample registration records and the following functions:
+
+- `getRegistrations()` – retrieves, filters, and paginates sample registration records.
+- `getSummary()` – returns sample dashboard summary values.
+
+The frontend has since been switched to `registrationsApi.js` to retrieve actual data from the C# backend.
 
 ## Team Roles
 
@@ -141,4 +160,4 @@ Replace `YOUR_API_PORT` with the actual port provided by the Backend Developer.
 
 GitHub Repository:
 
-https://github.com/kirstenmendiola2105-hue/car-show-registration-Abunales-Resultan.git
+[Car Show Registration System](https://github.com/kirstenmendiola2105-hue/car-show-registration-Abunales-Resultan.git)
